@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /collections/
+Disallow: /memo/
+Disallow: /chat/
+Disallow: /subscribed/
+Disallow: /auto-transcript/
+Disallow: /listen/
+Disallow: /rss/owner/
+Disallow: /rss/subscribed/
+Sitemap: https://eslres.com/sitemap.xml
