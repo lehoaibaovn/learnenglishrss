@@ -193,8 +193,10 @@ class RssItem extends Component {
     this.setState({ showReport: true, reportTranscript: undefined });
   }
 
-  onEditShortLinkClick(){
-      this.setState({ showShortLinkEdit: true, rssIdToEditShortLink: this.props.rss.id});
+  onEditRssFieldClick(dataFieldName){
+      this.setState({ showRssFieldEdit: true,
+        rssIdToEditField: this.props.rss.id,
+        rssFieldNameToEdit:dataFieldName});
   }
   onDeleteClick(){
     if(!this.state.chainDeleteRssClick){
@@ -264,8 +266,8 @@ handleReportClose() {
    this.setState({ showReport: false, reported: false, reportMessage: undefined,
       isReportCopyrightIssue: false});
 }
-handleEditRssShortLinkClose() {
-   this.setState({ showShortLinkEdit: false, rssIdToEditShortLink: undefined});
+handleEditRssFieldClose() {
+   this.setState({ showRssFieldEdit: false, rssIdToEditField: undefined, rssFieldNameToEdit: undefined});
 }
 onSaveTranscript(){
   const link = this.state.transcriptLink
@@ -350,16 +352,16 @@ onCheckTranscript(){
 
 }
 
-handleUpdateShortLink(){
-  var shortLinkValue = this.editShortLinkInput.value
-  if(shortLinkValue){
+handleUpdateRssField(){
+  var updateValue = this.editRssFieldInput.value
+  if(updateValue){
     var ref = db.collection('rss').doc(this.props.rss.id);
     ref.update({
-        shortlink: shortLinkValue
+        [this.state.rssFieldNameToEdit]: updateValue
     });
-    this.handleEditRssShortLinkClose()
+    this.handleEditRssFieldClose()
     var clone = Object.assign({}, this.props.rss)
-    clone.data.shortlink=shortLinkValue
+    clone.data[this.state.rssFieldNameToEdit]=updateValue
     this.props.updateRss(clone)
   }
 }
@@ -508,11 +510,17 @@ onCheckReportCopyrightIssue(){
     }
     var btnDeleteRss
     var btnEditShortLink
+    var btnEditRssName
+    var btnEditLink
     if(this.props.authState){
       btnDeleteRss = <Button className="text-secondary" size="sm" variant="link"
       onClick={this.onDeleteClick.bind(this)}>Delete</Button>
       btnEditShortLink = <Button className="text-secondary" size="sm" variant="link"
-      onClick={this.onEditShortLinkClick.bind(this)}>Edit short link</Button>
+      onClick={this.onEditRssFieldClick.bind(this, "shortlink")}>Edit short link</Button>
+      btnEditLink = <Button className="text-secondary" size="sm" variant="link"
+      onClick={this.onEditRssFieldClick.bind(this, "link")}>Edit link</Button>
+      btnEditRssName = <Button className="text-secondary" size="sm" variant="link"
+      onClick={this.onEditRssFieldClick.bind(this, "name")}>Edit name</Button>
     }
 
     var shortLinkView
@@ -545,11 +553,13 @@ onCheckReportCopyrightIssue(){
       <div className="d-flex align-items-center">
       <div className="text-wrap">
       <b>{rss.name}</b>
+      {btnEditRssName}
       </div>
 
       </div>
       <div className="text-truncate mt-2">
       <span className="mr-1">Link: </span>
+      {btnEditLink}
       <div><a target="_blank" href={rss.link}>{rss.link}</a></div>
       </div>
       {shortLinkView}
@@ -611,24 +621,23 @@ onCheckReportCopyrightIssue(){
           {footer}
       </Modal>
 
-      <Modal show={this.state.showShortLinkEdit} onHide={this.handleEditRssShortLinkClose.bind(this)}>
+      <Modal show={this.state.showRssFieldEdit} onHide={this.handleEditRssFieldClose.bind(this)}>
           <Modal.Header closeButton>
-            <Modal.Title>Edit short link</Modal.Title>
+            <Modal.Title>Edit RSS Field</Modal.Title>
           </Modal.Header>
           <Modal.Body>
           <div>
-          <div className="text-3x mb-2"><b><span>{rss.name}</span></b></div>
-          <div><div className="text-1x mb-2 mt-2"><b><span>Short link</span></b></div>
-          <input type="text" ref={el => this.editShortLinkInput=el}
-          placeholder="Short link" className="form-control mb-3" defaultValue={rss.shortlink||rss.name} /></div>
+          <div><div className="text-1x mb-2 mt-2"><b><span>{this.state.rssFieldNameToEdit}</span></b></div>
+          <input type="text" ref={el => this.editRssFieldInput=el}
+          placeholder="value" className="form-control mb-3" defaultValue={rss[this.state.rssFieldNameToEdit]} /></div>
           </div>
           </Modal.Body>
           <Modal.Footer>
             <span className="text-warning">
-            {this.state.editShortLinkMessage}
+            {this.state.editRssFieldMessage}
             </span>
-            <Button variant="primary" disabled={this.state.reported} onClick={this.handleUpdateShortLink.bind(this)}>
-              Update short link
+            <Button variant="primary" disabled={this.state.reported} onClick={this.handleUpdateRssField.bind(this)}>
+              Update field value
             </Button>
           </Modal.Footer>
       </Modal>
