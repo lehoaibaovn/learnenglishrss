@@ -15,6 +15,8 @@ Google "Installing Node.js and npm" for tutorial
 
 ## Installing
 
+This project run on Google Firebase. You need create a new Firebase project and get service-account.json file config from Firebase and put it to root project folder.
+
 Clone repository
 
 ```
@@ -30,6 +32,10 @@ cd learnenglishrss
 Install the dependencies by
 ```
 npm install
+```
+Build project
+```
+npm run build
 ```
 ## Start server 
 ### For production server: 
