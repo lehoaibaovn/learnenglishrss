@@ -136,7 +136,7 @@ onSwitchModeClick(){
       text = value
     }
     return (
-      <Nav.Item className="d-flex flex-nowrap p-2 mr-2 pointer" onClick={()=>{history.push(path)}}>
+      <Nav.Item className="d-flex flex-nowrap p-2 mr-2 pointer text-nowrap text-truncate" onClick={()=>{history.push(path)}}>
         <span>{text}</span>
       </Nav.Item>
     );
@@ -169,10 +169,10 @@ onSwitchModeClick(){
     const screenWidth = window.innerWidth
     return (
       <HeaderStyledContainer className="d-flex flex-column pl-2 pr-2">
-      <Nav className="d-flex flex-wrap justify-content-center align-items-center mr-5">
+      <Nav className="d-flex flex-nowrap justify-content-center align-items-center mr-5">
         {this.menuItem("Home", "/")}
-        {this.menuItem("Share Your Rss", "share-your-rss")}
-        {this.menuItem("Rss Generator", "generator")}
+        {this.menuItem("Share RSS", "share-your-rss")}
+        {this.menuItem("Generator", "generator")}
         {navItemReport}
         {btnSwitchMode}
         {btnLogout}
