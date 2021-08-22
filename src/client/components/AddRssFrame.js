@@ -13,7 +13,7 @@ import 'react-tagsinput/react-tagsinput.css'
 
 const mapStateToProps = (state) =>{
   return{
-
+    authState: state.user.authState
   }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -46,43 +46,50 @@ class AddRssFrame extends Component {
     var link = this.linkInput.value
     console.log("fetchRssLink", link)
     if(link){
-      let parser = new RSSParser();
-      let redirect = `${window.location.origin}/read-url/${link}`
-      parser.parseURL(redirect, (err, feed) => {
-        console.log(feed)
-        if(feed){
-          var data = {}
-          data.name = feed.title
-          if(feed.itunes && feed.itunes.image){
-            data.image = feed.itunes.image
-          }else if(feed.image){
-            data.image = feed.image.url
+      let siteDomain = window.location.hostname
+      if(link.includes(siteDomain)){
+        this.setState({
+          message:  "Can't share link from this site"
+        })
+      }else{
+        let parser = new RSSParser();
+        let redirect = `${window.location.origin}/read-url/${link}`
+        parser.parseURL(redirect, (err, feed) => {
+          console.log(feed)
+          if(feed){
+            var data = {}
+            data.name = feed.title
+            if(feed.itunes && feed.itunes.image){
+              data.image = feed.itunes.image
+            }else if(feed.image){
+              data.image = feed.image.url
+            }
+            if(data.image){
+              data.image = data.image.replace("http://", "https://")
+            }
+            var key = rssKeyByName(feed.title)
+            var docRef = db.collection("rss").doc(key);
+              docRef.get().then((doc)=> {
+                if (doc.exists) {
+                  data.rssId = key
+                  data.message = "Rss existed"
+                  data.existed = true
+                    this.setState(data)
+                } else {
+                  data.message = undefined
+                    this.setState(data)
+                }
+            }).catch((error)=> {
+              data.message = "Error getting document:"+ error
+              this.setState(data)
+            });
+          }else{
+            this.setState({
+              message: "no rss"
+            })
           }
-          if(data.image){
-            data.image = data.image.replace("http://", "https://")
-          }
-          var key = rssKeyByName(feed.title)
-          var docRef = db.collection("rss").doc(key);
-            docRef.get().then((doc)=> {
-              if (doc.exists) {
-                data.rssId = key
-                data.message = "Rss existed"
-                data.existed = true
-                  this.setState(data)
-              } else {
-                data.message = undefined
-                  this.setState(data)
-              }
-          }).catch((error)=> {
-            data.message = "Error getting document:"+ error
-            this.setState(data)
-          });
-        }else{
-          this.setState({
-            message: "no rss"
-          })
-        }
-      })
+        })
+      }
     }
 
   }
@@ -171,6 +178,10 @@ class AddRssFrame extends Component {
   }
 
   render(){
+    var btnUpdate = undefined
+    if(this.props.authState){
+      btnUpdate = <ButtonStyled disabled={!this.state.existed} onClick={this.updateRssLink.bind(this)} className="ml-3">Update Rss link</ButtonStyled>
+    }
     return(
       <div className='p-3'>
       <div>
@@ -202,7 +213,7 @@ class AddRssFrame extends Component {
       </div>
       <div className="mt-3 mb-2">
       <ButtonStyled disabled={this.state.message||!this.state.link || !this.state.name} onClick={this.addRssLink.bind(this)}>Submit</ButtonStyled>
-      <ButtonStyled disabled={!this.state.existed} onClick={this.updateRssLink.bind(this)} className="ml-3">Update Rss link</ButtonStyled>
+      {btnUpdate}
       </div>
       <p>{this.state.message||''}</p>
       </div>
