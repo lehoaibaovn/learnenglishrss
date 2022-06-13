@@ -58,7 +58,7 @@ class AddRssFrame extends Component {
           console.log(feed)
           if(feed){
             var data = {}
-            data.name = feed.title
+            data.name = feed.title.trim()
             if(feed.itunes && feed.itunes.image){
               data.image = feed.itunes.image
             }else if(feed.image){

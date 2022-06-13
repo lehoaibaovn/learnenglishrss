@@ -58,11 +58,11 @@
     "rss": "^1.2.2",
     "rss-parser": "^3.8.0",
     "styled-components": "^5.1.1",
-    "xml-beautifier": "^0.4.3",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "xml-beautifier": "^0.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",

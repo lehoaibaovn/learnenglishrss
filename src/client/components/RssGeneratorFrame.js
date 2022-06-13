@@ -69,9 +69,72 @@ class RssGeneratorFrame extends Component {
     const element = document.createElement("a");
     const file = new Blob([value], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = name.toLowerCase().replace(/\s{1,}/g,"-")+".xml";
+    element.download = name.toLowerCase().replace(/[^\sa-zA-Z0-9]/g,'').replace(/\s{1,}/g,"-")+".xml";
     document.body.appendChild(element);
     element.click();
+  }
+
+  isLetter(c) {
+    return c.toLowerCase() != c.toUpperCase();
+  }
+  isRemoveLineBreakIfNotEndSentence = false
+  onRemoveLineBreakIfNotEndSentence(){
+    this.isRemoveLineBreakIfNotEndSentence = true
+  }
+  removeLineBreakIfNotEndSentence(transcript){
+    console.log("checkonRemoveLineBreakIfNotEndSentence")
+      var lines = transcript.split(/\n/)
+      var result = ""
+      var lastCharacter
+      var firstCharacter
+      var line
+      var checkrange = lines.length
+      if(checkrange > 30){
+        checkrange = 30
+      }
+      var maxLineLength = 0
+      for(let i=0;i<checkrange;i++){
+        line = lines[i]
+        if(line.length > maxLineLength){
+          maxLineLength = line.length
+        }
+      }
+      console.log("checkmaxLineLength", maxLineLength)
+      lines.forEach(line=>{
+        console.log("checkline", line)
+        if(line.length>1){
+          if(line.startsWith("<")&&line.endsWith(">")){
+            result = result +"\n"+ line
+          }else{
+            lastCharacter = line.slice(-1)
+            firstCharacter = line.slice(0)
+            if(result.endsWith(" Mr. ") || result.endsWith(" Mrs. ")){
+              console.log("checkpreviousendwithmr", line)
+              result = result +"[endwithmors]"+line;
+            }else{
+              if(line.length/maxLineLength<0.8){
+                  if(firstCharacter == firstCharacter.toLowerCase() && lastCharacter=='.'){
+                    result = result +" "+ line
+                  }else{
+                    result = result +"\n"+ line
+                  }
+
+              }else{
+                result = result +" " +line
+              }
+
+            }
+
+            if (this.isLetter(lastCharacter) || lastCharacter===',' || line.endsWith(" Mr.") || line.endsWith(" Mrs.")){
+                      result = result + " ";
+                  }else{
+                      result = result + "\n";
+                  }
+          }
+
+        }
+      })
+      return result
   }
 
   render(){
@@ -80,10 +143,10 @@ class RssGeneratorFrame extends Component {
     const image = this.imageInput&&this.imageInput.value||''
     const url = this.rssLinkInput&&this.rssLinkInput.value||''
     var feed = new RSS({
-      title: title,
-      link: '',
-      description: description,
-      site_url: 'https://archive.org/details/people-2557399_640',
+      title: title.trim(),
+      link: 'https://archive.org/',
+      description: description.trim(),
+      site_url: 'https://archive.org/',
       image_url: image,
       language: 'en',
       categories: ['English Listening'],
@@ -109,22 +172,25 @@ class RssGeneratorFrame extends Component {
             break;
           }
         }
-        var descriptions = item.match(/<description>(.*?)<\/description>/)
+        var descriptions = item.match(/<description>(.|\n)*?<\/description>/)
         var description = undefined
         if(descriptions && descriptions.length>0){
           description = descriptions[0].replace(/<\/?description>/g,'');
         }
-        var transcripts = item.match(/<transcript>(.*?)<\/transcript>/)
+        var transcripts = item.match(/<transcript>(.|\n)*?<\/transcript>/)
         var transcript = undefined
         if(transcripts && transcripts.length>0){
           transcript = transcripts[0].replace(/<\/?transcript>/g,'');
+          if(this.isRemoveLineBreakIfNotEndSentence){
+            transcript = this.removeLineBreakIfNotEndSentence(transcript)
+          }
         }
           feed.item({
             title: title,
             enclosure : {url: media},
             description: description,
             custom_elements: [
-              {'transcript': transcript}
+              {'transcript': { _cdata: transcript } }
             ]
           });
 
@@ -160,6 +226,8 @@ class RssGeneratorFrame extends Component {
       <div className="d-flex align-items-center mb-2"><span>Rss Result</span>
       <Button className="ml-3" variant="light" onClick={this.onCopy.bind(this, xmlResult)}>Copy</Button>
       <Button className="ml-3" variant="light" onClick={this.downloadTxtFile.bind(this, title, xmlResult)}>Download</Button>
+      <Button className="ml-3" variant="light" onClick={this.onRemoveLineBreakIfNotEndSentence.bind(this)}>Remove Transcript Line Break If Not End Sentence</Button>
+
       <span className="ml-3 text-success">{this.state.message}</span>
       </div>
       <RssResult>
