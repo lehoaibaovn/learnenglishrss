@@ -108,12 +108,13 @@ class RssGeneratorFrame extends Component {
           }else{
             lastCharacter = line.slice(-1)
             firstCharacter = line.slice(0)
+
             if(result.endsWith(" Mr. ") || result.endsWith(" Mrs. ")){
               console.log("checkpreviousendwithmr", line)
-              result = result +"[endwithmors]"+line;
+              result = result +""+line;
             }else{
               if(line.length/maxLineLength<0.8){
-                  if(firstCharacter == firstCharacter.toLowerCase() && lastCharacter=='.'){
+                  if(firstCharacter == firstCharacter.toLowerCase() && !this.isLetter(lastCharacter)){
                     result = result +" "+ line
                   }else{
                     result = result +"\n"+ line
@@ -127,6 +128,9 @@ class RssGeneratorFrame extends Component {
 
             if (this.isLetter(lastCharacter) || lastCharacter===',' || line.endsWith(" Mr.") || line.endsWith(" Mrs.")){
                       result = result + " ";
+                  }else if(lastCharacter==='-' && !line.endsWith(" -")){
+                    result = result.slice(0, -1)
+
                   }else{
                       result = result + "\n";
                   }
