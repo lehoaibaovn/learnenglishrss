@@ -35,7 +35,7 @@
     "dateformat": "^3.0.3",
     "express": "^4.17.1",
     "firebase": "^7.15.5",
-    "firebase-admin": "^8.13.0",
+    "firebase-admin": "^11.4.1",
     "history": "4.10.1",
     "js-base64": "^2.6.2",
     "react": "^16.13.1",
