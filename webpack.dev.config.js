@@ -5,6 +5,20 @@ const webpack = require('webpack');
 const outputDirectory = "dist";
 module.exports = {
   resolve: {
+    fallback: {
+      "fs": false,
+      "tls": false,
+      "net": false,
+      "path": false,
+      "zlib": false,
+      "http": false,
+      "https": false,
+      "stream": false,
+      "crypto": false,
+      "timers": false,
+      "buffer": false,
+      "url": false
+    },
     alias: {
       Components: path.resolve(__dirname, './src/client/components/'),
       Client: path.resolve(__dirname, './src/client/'),
@@ -14,7 +28,6 @@ module.exports = {
     },
     extensions: ['.mjs', '.js', '.jsx', '.css', '.png', '.jpg', '.gif', '.jpeg'],
   },
-  node: { fs: 'empty' },
   mode: 'development',
   entry: [
         './src/client/index.js',
@@ -23,7 +36,7 @@ module.exports = {
     ],
   output: {
     path: path.join(__dirname, outputDirectory),
-    filename: "bundle.js",
+    filename: '[name].bundle.js',
     publicPath: '/build'
   },
   module: {
@@ -41,16 +54,25 @@ module.exports = {
       },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: "url-loader?limit=100000"
+
+        use: [
+                {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 100000
+                    }
+                }
+            ]
       }
     ]
   },
   devServer: {
     hot: true,
-    filename: 'bundle.js',
-    publicPath: '/build',
+    devMiddleware: {
+      publicPath: '/build'
+    },
     historyApiFallback: true,
-    contentBase: './dist',
+    static: './dist',
     port: 3091,
     proxy: [{
       context: ['/build', '/res','/read-url', '/check-transcript','/s'],

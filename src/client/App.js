@@ -7,7 +7,7 @@ import { hot } from 'react-hot-loader';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom'
 import Content from 'Components/Content';
-import {HeaderStyledContainer} from 'Components/Header'
+import HeaderStyledContainer from 'Components/Header'
 import {Helmet} from "react-helmet";
 
 const HeaderLoadingComponent = (props) => {

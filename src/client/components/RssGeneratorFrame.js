@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import { Waypoint } from 'react-waypoint'
 import {hashCode, rssKeyByName} from 'Utils'
 import {fb, db} from 'Firebase'
-import RSSParser from 'rss-parser'
 import RSS from 'rss';
 import beautify from 'xml-beautifier';
 import copy from 'copy-to-clipboard';

@@ -127,9 +127,10 @@ if(process.env.NODE_ENV == 'development') {
     const config = require('../../webpack.dev.config');
     let compiler = webpack(config);
     let devServer = new WebpackDevServer(compiler, config.devServer);
-    devServer.listen(devPort, () => {
-        console.log('webpack-dev-server is listening on port', devPort);
-    });
+    (async () => {
+      await devServer.start();
+      console.log('webpack-dev-server is listening on port', devPort);
+    })();
 }
 
 if(process.env.NODE_ENV == 'production') {

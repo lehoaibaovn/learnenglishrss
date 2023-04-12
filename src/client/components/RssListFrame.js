@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import {MdMoreVert, MdSort} from 'react-icons/md';
 import { Waypoint } from 'react-waypoint'
 import {fb, db} from 'Firebase'
-import RSSParser from 'rss-parser'
 import {ADMIN_UID} from 'Constants'
 import history from 'Client/history'
 import LoadingView from "Client/LoadingView";
