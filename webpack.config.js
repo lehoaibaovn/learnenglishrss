@@ -8,17 +8,13 @@ module.exports = {
   resolve: {
     fallback: {
       "fs": false,
-      "tls": false,
-      "net": false,
-      "path": false,
-      "zlib": false,
-      "http": false,
-      "https": false,
-      "stream": false,
-      "crypto": false,
-      "timers": false,
-      "buffer": false,
-      "url": false
+      "stream": require.resolve("stream-browserify"),
+      "timers": require.resolve("timers-browserify"),
+      "buffer": require.resolve("buffer/"),
+      "path": require.resolve("path-browserify"),
+      "url": require.resolve("url/"),
+      "https": require.resolve("https-browserify"),
+      "http": require.resolve("stream-http")
     },
     alias: {
       Components: path.resolve(__dirname, './src/client/components/'),
