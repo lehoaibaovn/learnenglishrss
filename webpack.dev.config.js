@@ -76,6 +76,9 @@ module.exports = {
     }]
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+}),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
       favicon: "./public/favicon.ico"
