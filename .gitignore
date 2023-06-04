@@ -1,7 +1,8 @@
-\.DS_Store/
+.DS_Store/
 .DS_Store
 ._*
 /.idea
 /node_modules
 dist/*
+build/*
 service-account.json
