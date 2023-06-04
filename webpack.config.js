@@ -2,8 +2,9 @@ const path = require("path");
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const outputDirectory = "dist";
+const outputDirectory = "/build";
 module.exports = {
   resolve: {
     fallback: {
@@ -14,7 +15,8 @@ module.exports = {
       "path": require.resolve("path-browserify"),
       "url": require.resolve("url/"),
       "https": require.resolve("https-browserify"),
-      "http": require.resolve("stream-http")
+      "http": require.resolve("stream-http"),
+      "process/browser": require.resolve("process/browser")
     },
     alias: {
       Components: path.resolve(__dirname, './src/client/components/'),
@@ -31,6 +33,15 @@ module.exports = {
     path: path.join(__dirname, outputDirectory),
     filename: '[name].bundle.js',
     publicPath: '/build'
+  },
+  devServer: {
+    hot: true,
+    devMiddleware: {
+      publicPath: '/build'
+    },
+    historyApiFallback: true,
+    static: './build',
+    port: 3090,
   },
   optimization: {
     splitChunks: {
@@ -75,9 +86,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      process: 'process/browser',
-}),
+    new ReactRefreshPlugin(),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
       favicon: "./public/favicon.ico"

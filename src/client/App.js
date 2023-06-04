@@ -3,7 +3,6 @@ import Loadable from 'react-loadable';
 import "./app.css";
 import LoadingComponent from 'Client/LoadingComponent';
 import { Router, Route, Link } from 'react-router-dom'
-import { hot } from 'react-hot-loader';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom'
 import Content from 'Components/Content';
@@ -65,4 +64,4 @@ class App extends Component {
   }
 }
 
-export default hot(module)(App)
+export default (App)
